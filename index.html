@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>假名学习</title>
+    <style>
+        body {
+            font-family: 微软雅黑, 黑体, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2em;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .box {
+            width: 150px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            font-family: 'Times New Roman', 楷体, Times, serif;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .hidden {
+            color: transparent;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 30px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:active {
+            background-color: #3e8e41;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>平假名・片假名・罗马音对照</h1>
+
+    <div class="container">
+        <div id="hiraganaBox" class="box"></div>
+        <div id="katakanaBox" class="box"></div>
+        <div id="romajiBox" class="box"></div>
+    </div>
+
+    <div class="buttons">
+        <button onclick="refreshRandom()">刷新</button>
+        <button onclick="toggleVisibility()">显示/隐藏</button>
+    </div>
+
+    <script>
+        // 假名表
+        const kanaData = [
+            // 清音
+            { hiragana: "あ", katakana: "ア", romaji: "a" },
+            { hiragana: "い", katakana: "イ", romaji: "i" },
+            { hiragana: "う", katakana: "ウ", romaji: "u" },
+            { hiragana: "え", katakana: "エ", romaji: "e" },
+            { hiragana: "お", katakana: "オ", romaji: "o" },
+            { hiragana: "か", katakana: "カ", romaji: "ka" },
+            { hiragana: "き", katakana: "キ", romaji: "ki" },
+            { hiragana: "く", katakana: "ク", romaji: "ku" },
+            { hiragana: "け", katakana: "ケ", romaji: "ke" },
+            { hiragana: "こ", katakana: "コ", romaji: "ko" },
+            { hiragana: "さ", katakana: "サ", romaji: "sa" },
+            { hiragana: "し", katakana: "シ", romaji: "shi" },
+            { hiragana: "す", katakana: "ス", romaji: "su" },
+            { hiragana: "せ", katakana: "セ", romaji: "se" },
+            { hiragana: "そ", katakana: "ソ", romaji: "so" },
+            { hiragana: "た", katakana: "タ", romaji: "ta" },
+            { hiragana: "ち", katakana: "チ", romaji: "chi" },
+            { hiragana: "つ", katakana: "ツ", romaji: "tsu" },
+            { hiragana: "て", katakana: "テ", romaji: "te" },
+            { hiragana: "と", katakana: "ト", romaji: "to" },
+            { hiragana: "な", katakana: "ナ", romaji: "na" },
+            { hiragana: "に", katakana: "ニ", romaji: "ni" },
+            { hiragana: "ぬ", katakana: "ヌ", romaji: "nu" },
+            { hiragana: "ね", katakana: "ネ", romaji: "ne" },
+            { hiragana: "の", katakana: "ノ", romaji: "no" },
+            { hiragana: "は", katakana: "ハ", romaji: "ha" },
+            { hiragana: "ひ", katakana: "ヒ", romaji: "hi" },
+            { hiragana: "ふ", katakana: "フ", romaji: "fu" },
+            { hiragana: "へ", katakana: "ヘ", romaji: "he" },
+            { hiragana: "ほ", katakana: "ホ", romaji: "ho" },
+            { hiragana: "ま", katakana: "マ", romaji: "ma" },
+            { hiragana: "み", katakana: "ミ", romaji: "mi" },
+            { hiragana: "む", katakana: "ム", romaji: "mu" },
+            { hiragana: "め", katakana: "メ", romaji: "me" },
+            { hiragana: "も", katakana: "モ", romaji: "mo" },
+            { hiragana: "や", katakana: "ヤ", romaji: "ya" },
+            { hiragana: "ゆ", katakana: "ユ", romaji: "yu" },
+            { hiragana: "よ", katakana: "ヨ", romaji: "yo" },
+            { hiragana: "ら", katakana: "ラ", romaji: "ra" },
+            { hiragana: "り", katakana: "リ", romaji: "ri" },
+            { hiragana: "る", katakana: "ル", romaji: "ru" },
+            { hiragana: "れ", katakana: "レ", romaji: "re" },
+            { hiragana: "ろ", katakana: "ロ", romaji: "ro" },
+            { hiragana: "わ", katakana: "ワ", romaji: "wa" },
+            { hiragana: "を", katakana: "ヲ", romaji: "wo" },
+            { hiragana: "ん", katakana: "ン", romaji: "n" },
+
+            // 浊音
+            { hiragana: "が", katakana: "ガ", romaji: "ga" },
+            { hiragana: "ぎ", katakana: "ギ", romaji: "gi" },
+            { hiragana: "ぐ", katakana: "グ", romaji: "gu" },
+            { hiragana: "げ", katakana: "ゲ", romaji: "ge" },
+            { hiragana: "ご", katakana: "ゴ", romaji: "go" },
+            { hiragana: "ざ", katakana: "ザ", romaji: "za" },
+            { hiragana: "じ", katakana: "ジ", romaji: "ji" },
+            { hiragana: "ず", katakana: "ズ", romaji: "zu" },
+            { hiragana: "ぜ", katakana: "ゼ", romaji: "ze" },
+            { hiragana: "ぞ", katakana: "ゾ", romaji: "zo" },
+            { hiragana: "だ", katakana: "ダ", romaji: "da" },
+            { hiragana: "ぢ", katakana: "ヂ", romaji: "ji" },
+            { hiragana: "づ", katakana: "ヅ", romaji: "zu" },
+            { hiragana: "で", katakana: "デ", romaji: "de" },
+            { hiragana: "ど", katakana: "ド", romaji: "do" },
+            { hiragana: "ば", katakana: "バ", romaji: "ba" },
+            { hiragana: "び", katakana: "ビ", romaji: "bi" },
+            { hiragana: "ぶ", katakana: "ブ", romaji: "bu" },
+            { hiragana: "べ", katakana: "ベ", romaji: "be" },
+            { hiragana: "ぼ", katakana: "ボ", romaji: "bo" },
+
+            // 半浊音
+            { hiragana: "ぱ", katakana: "パ", romaji: "pa" },
+            { hiragana: "ぴ", katakana: "ピ", romaji: "pi" },
+            { hiragana: "ぷ", katakana: "プ", romaji: "pu" },
+            { hiragana: "ぺ", katakana: "ペ", romaji: "pe" },
+            { hiragana: "ぽ", katakana: "ポ", romaji: "po" },
+
+            // 拗音
+            { hiragana: "きゃ", katakana: "キャ", romaji: "kya" },
+            { hiragana: "きゅ", katakana: "キュ", romaji: "kyu" },
+            { hiragana: "きょ", katakana: "キョ", romaji: "kyo" },
+            { hiragana: "しゃ", katakana: "シャ", romaji: "sha" },
+            { hiragana: "しゅ", katakana: "シュ", romaji: "shu" },
+            { hiragana: "しょ", katakana: "ショ", romaji: "sho" },
+            { hiragana: "ちゃ", katakana: "チャ", romaji: "cha" },
+            { hiragana: "ちゅ", katakana: "チュ", romaji: "chu" },
+            { hiragana: "ちょ", katakana: "チョ", romaji: "cho" },
+            { hiragana: "にゃ", katakana: "ニャ", romaji: "nya" },
+            { hiragana: "にゅ", katakana: "ニュ", romaji: "nyu" },
+            { hiragana: "にょ", katakana: "ニョ", romaji: "nyo" },
+            { hiragana: "ひゃ", katakana: "ヒャ", romaji: "hya" },
+            { hiragana: "ひゅ", katakana: "ヒュ", romaji: "hyu" },
+            { hiragana: "ひょ", katakana: "ヒョ", romaji: "hyo" },
+            { hiragana: "みゃ", katakana: "ミャ", romaji: "mya" },
+            { hiragana: "みゅ", katakana: "ミュ", romaji: "myu" },
+            { hiragana: "みょ", katakana: "ミョ", romaji: "myo" },
+            { hiragana: "りゃ", katakana: "リャ", romaji: "rya" },
+            { hiragana: "りゅ", katakana: "リュ", romaji: "ryu" },
+            { hiragana: "りょ", katakana: "リョ", romaji: "ryo" },
+            { hiragana: "ぎゃ", katakana: "ギャ", romaji: "gya" },
+            { hiragana: "ぎゅ", katakana: "ギュ", romaji: "gyu" },
+            { hiragana: "ぎょ", katakana: "ギョ", romaji: "gyo" },
+            { hiragana: "じゃ", katakana: "ジャ", romaji: "ja" },
+            { hiragana: "じゅ", katakana: "ジュ", romaji: "ju" },
+            { hiragana: "じょ", katakana: "ジョ", romaji: "jo" },
+            { hiragana: "びゃ", katakana: "ビャ", romaji: "bya" },
+            { hiragana: "びゅ", katakana: "ビュ", romaji: "byu" },
+            { hiragana: "びょ", katakana: "ビョ", romaji: "byo" },
+            { hiragana: "ぴゃ", katakana: "ピャ", romaji: "pya" },
+            { hiragana: "ぴゅ", katakana: "ピュ", romaji: "pyu" },
+            { hiragana: "ぴょ", katakana: "ピョ", romaji: "pyo" }
+        ];
+
+        let currentKana = {};
+        let hidden = true;
+
+        // 初始化显示
+        window.onload = function() {
+            refreshRandom();
+        };
+
+        // 刷新按钮功能，随机选择一个假名并显示
+        function refreshRandom() {
+            const randomIndex = Math.floor(Math.random() * kanaData.length);
+            currentKana = kanaData[randomIndex];
+
+            // 随机选择显示位置
+            const positions = ["hiragana", "katakana", "romaji"];
+            const showPosition = positions[Math.floor(Math.random() * positions.length)];
+
+            // 隐藏其他两个方格的内容
+            document.getElementById("hiraganaBox").textContent = showPosition === "hiragana" ? currentKana.hiragana : "";
+            document.getElementById("katakanaBox").textContent = showPosition === "katakana" ? currentKana.katakana : "";
+            document.getElementById("romajiBox").textContent = showPosition === "romaji" ? currentKana.romaji : "";
+
+            // 重置隐藏状态为true，每次刷新后都只显示一个
+            hidden = true;
+        }
+
+        // 显示/隐藏按钮功能，仅在当前步骤中切换显示状态
+        function toggleVisibility() {
+            hidden = !hidden;
+            if (!hidden) {
+                // 显示所有方格的内容
+                document.getElementById("hiraganaBox").textContent = currentKana.hiragana;
+                document.getElementById("katakanaBox").textContent = currentKana.katakana;
+                document.getElementById("romajiBox").textContent = currentKana.romaji;
+            } else {
+                // 隐藏非选中的方格
+                refreshRandom(); // 隐藏时重置为当前刷新状态
+            }
+        }
+    </script>
+
+</body>
+</html>
