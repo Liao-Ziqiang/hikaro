@@ -3,6 +3,9 @@
 这是一个简单的网页应用，帮助用户学习平假名、片假名和罗马音的对应关系。页面上有三个方格，分别显示平假名、片假名和罗马音中的一个，用户可以通过按钮来刷新或切换显示/隐藏其他两个方格的内容。  
 This is a simple web application that helps users learn the correspondence between Hiragana, Katakana, and Romaji. The page has three boxes that display one character from Hiragana, Katakana, or Romaji, and users can use buttons to refresh or toggle the display/hide of the other two boxes.
 
+- 该项目已部署至Vercel平台，您可以通过[此链接](https://hikaro.vercel.app/)访问并使用
+- The project has been deployed on the Vercel platform, and you can access and use it through [this link](https://hikaro.vercel.app/).
+
 ![ui](./ui.jpg "interface of hikaro")
 
 ## 功能 / Features
