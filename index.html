@@ -6,7 +6,7 @@
     <title>假名学习</title>
     <style>
         body {
-            font-family: 微软雅黑, 楷体, Arial, sans-serif;
+            font-family: 微软雅黑, 黑体, Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -34,9 +34,9 @@
             height: 150px;
             display: flex;
             align-items: center;
-            font-family: 'Times New Roman', 楷体, Times, serif;
             justify-content: center;
             font-size: 2.5em;
+            font-family: 'Times New Roman', 楷体, 宋体, Times, serif;
             background-color: #fff;
             border: 2px solid #ccc;
             border-radius: 10px;
@@ -74,7 +74,7 @@
 </head>
 <body>
 
-    <h1>平假名・片假名・罗马音对照</h1>
+    <h1>平假名・片假名・罗马音</h1>
 
     <div class="container">
         <div id="hiraganaBox" class="box"></div>
@@ -207,19 +207,39 @@
         let hidden = true;  // 控制显示/隐藏的状态
         let showPosition = "";  // 记录当前显示的方格位置
 
-        // 页面加载时自动刷新
+        // 引入一个基于时间的随机数生成器 (线性同余生成器)
+        function seededRandom(seed) {
+            const m = 0x80000000; // 2^31
+            const a = 1103515245;
+            const c = 12345;
+            seed = (a * seed + c) % m;
+            return seed / (m - 1);
+        }
+
+        // 获取当前时间戳作为种子
+        function getSeed() {
+            return new Date().getTime();
+        }
+
+        // 使用时间戳种子来生成随机数
+        function getRandomIndex(max) {
+            const seed = getSeed();
+            return Math.floor(seededRandom(seed) * max);
+        }
+
+        // 初始化显示
         window.onload = function() {
             refreshRandom();
         };
 
         // 刷新按钮功能，随机选择一个假名并显示
         function refreshRandom() {
-            const randomIndex = Math.floor(Math.random() * kanaData.length);
+            const randomIndex = getRandomIndex(kanaData.length);
             currentKana = kanaData[randomIndex];
 
             // 随机选择显示位置
             const positions = ["hiragana", "katakana", "romaji"];
-            showPosition = positions[Math.floor(Math.random() * positions.length)];
+            showPosition = positions[getRandomIndex(positions.length)];
 
             // 隐藏其他两个方格的内容
             document.getElementById("hiraganaBox").textContent = showPosition === "hiragana" ? currentKana.hiragana : "";
